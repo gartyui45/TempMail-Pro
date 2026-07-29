@@ -37,30 +37,14 @@ jobs:
         run: flutter test || echo "Sem testes configurados"
 
       - name: 🏗️ Build APK Release
-        run: flutter build apk --release --split-per-abi
+        run: flutter build apk --release --target-platform android-arm64,android-arm
+        env:
+          GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
 
-      - name: 📤 Upload APK (arm64-v8a)
+      - name: 📤 Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: TempMail-App-arm64-v8a
-          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-
-      - name: 📤 Upload APK (armeabi-v7a)
-        uses: actions/upload-artifact@v4
-        with:
-          name: TempMail-App-armeabi-v7a
-          path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-
-      - name: 📤 Upload APK (x86_64)
-        uses: actions/upload-artifact@v4
-        with:
-          name: TempMail-App-x86_64
-          path: build/app/outputs/flutter-apk/app-x86_64-release.apk
-
-      - name: 📤 Upload APK Universal
-        uses: actions/upload-artifact@v4
-        with:
-          name: TempMail-App-Universal
+          name: TempMail-Pro-APK
           path: build/app/outputs/flutter-apk/app-release.apk
 
       - name: 🚀 Criar Release
@@ -79,12 +63,8 @@ jobs:
             - ⚡ Rápido e leve
             - 🔒 Privacidade total
             
-            ### 📥 Downloads:
-            - Baixe o APK correspondente à sua arquitetura
-            - Universal funciona em todos os dispositivos
+            ### 📥 Download:
+            - APK Universal (arm64-v8a + armeabi-v7a)
           files: |
-            build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
-            build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
-            build/app/outputs/flutter-apk/app-x86_64-release.apk
             build/app/outputs/flutter-apk/app-release.apk
           generate_release_notes: true
