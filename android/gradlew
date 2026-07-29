@@ -1,0 +1,19 @@
+#!/bin/sh
+# Gradle Wrapper - TempMail App
+DIRNAME=$(dirname "$0")
+APP_HOME=$(cd "$DIRNAME" && pwd)
+
+# Se tiver Gradle no PATH, usa ele
+if command -v gradle > /dev/null 2>&1; then
+    exec gradle "$@"
+fi
+
+# Fallback: tenta java diretamente com o wrapper jar se existir
+if [ -f "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" ]; then
+    java -cp "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
+    exit $?
+fi
+
+echo "Gradle não encontrado. Use GitHub Actions para compilar automaticamente."
+echo "Ou instale Gradle: https://gradle.org/install/"
+exit 1
