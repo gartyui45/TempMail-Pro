@@ -36,8 +36,13 @@ jobs:
       - name: 🧪 Rodar testes
         run: flutter test || echo "Sem testes configurados"
 
+      - name: 📦 Instalar Android SDK 36
+        run: |
+          yes | sdkmanager "platforms;android-36" 2>&1 | tail -3 || true
+          echo "ANDROID_HOME=$ANDROID_HOME"
+
       - name: 🏗️ Build APK Release
-        run: flutter build apk --release --target-platform android-arm64,android-arm
+        run: flutter build apk --release
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
 
