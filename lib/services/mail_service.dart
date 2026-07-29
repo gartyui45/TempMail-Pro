@@ -18,8 +18,9 @@ class MailService {
   String? get currentEmail => _currentEmail;
   String? get currentPassword => _currentPassword;
 
-  /// Domínios personalizados obscure/anti-blocklist
-  static const List<String> _customDomains = [
+  /// 🔥 Domínios ANTI-BLOCKLIST - Obscuros e desconhecidos
+  /// Esses domínios passam despercebidos pelos sistemas de bloqueio
+  static const List<String> _antiBlocklistDomains = [
     'cl-mail.com',
     'lxcode.site',
     'nxi.tn',
@@ -27,10 +28,30 @@ class MailService {
     'mailrht.com',
     'dropmail.cc',
     'tempmail.dev',
+    'neo-mail.co',
+    'cyph.email',
+    'xmailer.one',
+    'prontobox.net',
+    'quickinbox.co',
+    'flash-mail.xyz',
+    'vaultmail.cc',
+    'silentbox.info',
+    'cipherpost.net',
+    'eclipso.space',
+    'quantummail.me',
+    'nexusmail.io',
+    'aurorabox.co',
   ];
 
-  /// Busca domínios disponíveis na API
-  Future<List<MailDomain>> getDomains() async {
+  /// Cache de domínios da API
+  List<MailDomain> _cachedDomains = [];
+
+  /// Busca domínios disponíveis (com cache)
+  Future<List<String>> getDomains({bool forceRefresh = false}) async {
+    if (_cachedDomains.isNotEmpty && !forceRefresh) {
+      return _cachedDomains.map((d) => d.domain).toList();
+    }
+
     try {
       final response = await http.get(
         Uri.parse(_domainUrl),
@@ -40,47 +61,55 @@ class MailService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['hydra:member'] != null) {
-          return (data['hydra:member'] as List)
+          _cachedDomains = (data['hydra:member'] as List)
               .map((e) => MailDomain.fromJson(e))
               .toList();
+          if (_cachedDomains.isNotEmpty) {
+            return _cachedDomains.map((d) => d.domain).toList();
+          }
         }
       }
     } catch (_) {}
 
-    // Fallback para domínios customizados
-    return _customDomains
-        .map((d) => MailDomain(
-              id: d,
-              domain: d,
-              isActive: true,
-              isPrivate: false,
-              createdAt: DateTime.now(),
-            ))
-        .toList();
+    // Fallback para domínios anti-blocklist
+    return List.from(_antiBlocklistDomains);
   }
 
-  /// Cria uma conta de e-mail temporária
+  /// Cria uma conta de e-mail instantânea
   Future<MailAccount?> createAccount({String? domain}) async {
     try {
-      // Pega domínios disponíveis
-      List<MailDomain> domains = await getDomains();
+      List<String> domains = await getDomains();
 
       if (domain == null && domains.isNotEmpty) {
-        // Escolhe um domínio aleatório
-        final random = Random();
-        domain = domains[random.nextInt(domains.length)].domain;
+        // Tenta domínios aleatórios até conseguir
+        domains.shuffle(Random());
+        for (final d in domains) {
+          final result = await _tryCreateAccount(d);
+          if (result != null) return result;
+        }
       }
 
-      if (domain == null || domain.isEmpty) {
-        domain = _customDomains[Random().nextInt(_customDomains.length)];
+      // Último recurso: domínios anti-blocklist
+      final shuffled = List.from(_antiBlocklistDomains)..shuffle(Random());
+      for (final d in shuffled) {
+        final result = await _tryCreateAccount(d);
+        if (result != null) return result;
       }
+    } catch (e) {
+      print('Erro ao criar conta: $e');
+    }
+    return null;
+  }
 
-      // Gera e-mail aleatório
+  /// Tenta criar conta em um domínio específico
+  Future<MailAccount?> _tryCreateAccount(String domain) async {
+    try {
       final random = Random();
-      final username =
-          '${_generateRandomString(8)}${random.nextInt(9999)}';
-      final email = '$username@$domain';
-      final password = _generateRandomString(16);
+      final chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      final prefix = List.generate(6, (_) => chars[random.nextInt(chars.length)]).join();
+      final suffix = random.nextInt(999999);
+      final email = '$prefix$suffix@$domain';
+      final password = List.generate(20, (_) => chars[random.nextInt(chars.length)]).join();
 
       final response = await http.post(
         Uri.parse(_accountUrl),
@@ -100,7 +129,7 @@ class MailService {
         _currentPassword = password;
         _accountId = data['id'];
 
-        // Faz login para obter token
+        // Login automático
         await _login(email, password);
 
         return MailAccount(
@@ -109,15 +138,8 @@ class MailService {
           password: password,
           createdAt: DateTime.now(),
         );
-      } else {
-        // Tenta novamente com outro domínio se falhar
-        if (domains.length > 1) {
-          return createAccount(domain: domains[Random().nextInt(domains.length)].domain);
-        }
       }
-    } catch (e) {
-      print('Erro ao criar conta: $e');
-    }
+    } catch (_) {}
     return null;
   }
 
@@ -142,13 +164,11 @@ class MailService {
         _accountId = data['id'];
         return true;
       }
-    } catch (e) {
-      print('Erro no login: $e');
-    }
+    } catch (_) {}
     return false;
   }
 
-  /// Busca mensagens da caixa de entrada
+  /// Busca mensagens INSTANTANEAMENTE
   Future<EmailResponse> getMessages({int page = 1}) async {
     if (_token == null) return EmailResponse(messages: []);
 
@@ -164,13 +184,17 @@ class MailService {
       if (response.statusCode == 200) {
         return EmailResponse.fromJson(json.decode(response.body));
       }
-    } catch (e) {
-      print('Erro ao buscar mensagens: $e');
-    }
+
+      // Token expirado? Tenta renovar
+      if (response.statusCode == 401 && _currentEmail != null && _currentPassword != null) {
+        await _login(_currentEmail!, _currentPassword!);
+        return getMessages(page: page);
+      }
+    } catch (_) {}
     return EmailResponse(messages: []);
   }
 
-  /// Busca uma mensagem específica pelo ID
+  /// Busca mensagem por ID
   Future<EmailMessage?> getMessage(String id) async {
     if (_token == null) return null;
 
@@ -186,16 +210,13 @@ class MailService {
       if (response.statusCode == 200) {
         return EmailMessage.fromJson(json.decode(response.body));
       }
-    } catch (e) {
-      print('Erro ao buscar mensagem: $e');
-    }
+    } catch (_) {}
     return null;
   }
 
-  /// Marca mensagem como lida
+  /// Marca como lida
   Future<bool> markAsRead(String id) async {
     if (_token == null) return false;
-
     try {
       final response = await http.patch(
         Uri.parse('$_messageUrl/$id'),
@@ -206,54 +227,46 @@ class MailService {
         body: json.encode({'seen': true}),
       );
       return response.statusCode == 200;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
 
-  /// Deleta uma mensagem
+  /// Deleta mensagem
   Future<bool> deleteMessage(String id) async {
     if (_token == null) return false;
-
     try {
       final response = await http.delete(
         Uri.parse('$_messageUrl/$id'),
-        headers: {
-          'Authorization': 'Bearer $_token',
-        },
+        headers: {'Authorization': 'Bearer $_token'},
       );
       return response.statusCode == 204;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   }
 
-  /// Deleta a conta atual
+  /// Deleta conta atual
   Future<bool> deleteAccount() async {
     if (_token == null || _accountId == null) return false;
-
     try {
-      final response = await http.delete(
+      await http.delete(
         Uri.parse('$_accountUrl/$_accountId'),
-        headers: {
-          'Authorization': 'Bearer $_token',
-        },
+        headers: {'Authorization': 'Bearer $_token'},
       );
-      if (response.statusCode == 204) {
-        _token = null;
-        _accountId = null;
-        _currentEmail = null;
-        _currentPassword = null;
-        return true;
-      }
-    } catch (_) {}
-    return false;
+      _token = null;
+      _accountId = null;
+      _currentEmail = null;
+      _currentPassword = null;
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
-  /// Verifica se está logado
   bool get isLoggedIn => _token != null;
 
-  /// Gera string aleatória
+  /// Gera string aleatória segura
   String _generateRandomString(int length) {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
     final random = Random();

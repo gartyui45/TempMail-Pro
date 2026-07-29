@@ -1,92 +1,61 @@
-# 🔷 TempMail Pro - E-mail Temporário Premium
+# 🛡️ CypherMail Pro - E-mail Temporário Premium Anti-Blocklist
 
 <div align="center">
-  <img src="assets/icon_3d.png" width="200" alt="TempMail Pro Icon"/>
+  <img src="assets/icon_3d.png" width="200" alt="CypherMail Pro Icon"/>
   
-  ### 📧 E-mail Descartável • Neon 3D • Ultra Rápido
+  ### 🔷 E-mail Descartável • Neon 3D • Anti-Blocklist • Ilimitado
   
-  ![Flutter](https://img.shields.io/badge/Flutter-3.16+-02569B?style=for-the-badge&logo=flutter)
-  ![Dart](https://img.shields.io/badge/Dart-3.1+-0175C2?style=for-the-badge&logo=dart)
+  ![Flutter](https://img.shields.io/badge/Flutter-3.44+-02569B?style=for-the-badge&logo=flutter)
+  ![Dart](https://img.shields.io/badge/Dart-3.2+-0175C2?style=for-the-badge&logo=dart)
   ![APK](https://img.shields.io/badge/APK-Release-00D4FF?style=for-the-badge&logo=android)
   
-  [![Build APK](https://github.com/seuuser/temp_mail_app/actions/workflows/build_apk.yml/badge.svg)](https://github.com/seuuser/temp_mail_app/actions/workflows/build_apk.yml)
+  [![Build APK](https://github.com/gartyui45/TempMail-Pro/actions/workflows/build_apk.yml/badge.svg)](https://github.com/gartyui45/TempMail-Pro/actions/workflows/build_apk.yml)
 </div>
 
 ---
 
-## ✨ Funcionalidades
+## 🔥 Funcionalidades Premium
 
 | Recurso | Descrição |
 |---------|-----------|
-| 📧 **E-mail Instantâneo** | Criação automática em 1 segundo |
-| 🛡️ **Domínios Anti-Blocklist** | Domínios obscuros que não estão em blocklists |
-| 🔄 **Auto-Refresh** | Atualização automática a cada 10 segundos |
-| 🎨 **Interface Neon 3D** | Design premium com partículas animadas |
+| 🛡️ **Anti-Blocklist** | 20+ domínios obscuros que PASSAM despercebidos |
+| ⚡ **Instantâneo** | Recebe códigos em segundos - refresh a cada 5s |
+| ♾️ **Ilimitado** | Gere quantos e-mails quiser, quantas vezes quiser |
+| 🎨 **Neon 3D Premium** | Interface com partículas animadas em câmera lenta |
+| 🔄 **Auto-Refresh** | Verificação automática a cada 5 segundos |
 | 📋 **Cópia Rápida** | Copie seu e-mail com 1 toque |
 | 🗑️ **Gerenciamento** | Leia, arquive ou delete mensagens |
-| 🔒 **100% Anônimo** | Sem cadastro, sem rastreamento |
-| ⚡ **Leve e Rápido** | APK otimizado < 15MB |
+| 🔒 **100% Anônimo** | Sem cadastro, sem rastreamento, sem limites |
 
 ## 📱 Como Usar
 
-1. **Abra o app** - Seu e-mail é gerado automaticamente
-2. **Copie o endereço** - Toque no botão de cópia
-3. **Use onde quiser** - Cadastros, verificações, testes
-4. **Aguarde** - Os e-mails chegam em tempo real
-5. **Troque quando quiser** - Toque no refresh para novo e-mail
+1. **Abra o app** - Seu e-mail é gerado automaticamente 🚀
+2. **Copie o endereço** - Toque no botão de cópia 📋
+3. **Use onde quiser** - Cadastros, verificações, códigos 2FA 🔑
+4. **Receba instantaneamente** - Os códigos chegam em segundos ⚡
+5. **Gere outro quando quiser** - Toque em "NOVO" para e-mail ilimitado ♾️
 
 ## 🏗️ Build Local
 
 ```bash
-# Clone o repositório
-git clone https://github.com/seuuser/temp_mail_app.git
-cd temp_mail_app
-
-# Instale as dependências
 flutter pub get
-
-# Execute em debug
 flutter run
-
-# Build APK Release
-flutter build apk --release --split-per-abi
+flutter build apk --release
 ```
 
-## 🤖 GitHub Actions (Build Automático)
+## 🤖 GitHub Actions
 
-O projeto já inclui CI/CD completo. Ao fazer push para `main` ou `master`:
+O build é automático. O APK é gerado em ~3 minutos.
 
-1. ✅ Análise de código
-2. 🧪 Testes automatizados
-3. 🏗️ Build de 4 variantes de APK:
-   - `arm64-v8a` (99% dos dispositivos modernos)
-   - `armeabi-v7a` (dispositivos antigos)
-   - `x86_64` (emuladores)
-   - `Universal` (todos)
-4. 📦 Artefatos disponíveis para download
-5. 🚀 Release automático com changelog
+## 📥 Download do APK
 
-### Para baixar seu APK:
+**Baixe o APK mais recente em:**
+👉 **[https://github.com/gartyui45/TempMail-Pro/actions](https://github.com/gartyui45/TempMail-Pro/actions)**
 
-1. Faça fork/push deste repositório para o GitHub
-2. Vá em **Actions** > **Build TempMail APK** > **Run workflow**
-3. Aguarde ~5 minutos
-4. Baixe os artefatos na seção **Summary** da build
-
-## 🔧 Domínios Suportados
-
-O app usa a API [mail.tm](https://mail.tm) com dezenas de domínios, incluindo domínios obscuros que passam despercebidos por blocklists.
-
-## 📸 Screenshots
-
-*(Adicione screenshots aqui após o build)*
-
-## 📄 Licença
-
-MIT - Use, modifique, distribua livremente.
+Clique no último build > Artifacts > TempMail-Pro-APK
 
 ---
 
 <div align="center">
-  <b>Feito com 💙 • Flutter • Dart • Neon</b>
+  <b>🛡️ CypherMail Pro • Feito com 💙 • Flutter • Dart • Neon 3D</b>
 </div>

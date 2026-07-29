@@ -10,16 +10,16 @@ void main() {
     systemNavigationBarColor: Color(0xFF05081A),
     systemNavigationBarIconBrightness: Brightness.light,
   ));
-  runApp(const TempMailApp());
+  runApp(const CypherMailApp());
 }
 
-class TempMailApp extends StatelessWidget {
-  const TempMailApp({super.key});
+class CypherMailApp extends StatelessWidget {
+  const CypherMailApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Temp Mail Pro',
+      title: 'CypherMail Pro',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -30,7 +30,6 @@ class TempMailApp extends StatelessWidget {
           surface: const Color(0xFF0A0E27),
         ),
         useMaterial3: true,
-        fontFamily: 'RobotoMono',
       ),
       home: const HomeScreen(),
     );
