@@ -37,8 +37,13 @@ jobs:
         run: flutter test || echo "Sem testes configurados"
 
       - name: 📦 Instalar Android SDK 36
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" > /dev/null 2>&1 || true
+
+      - name: Configurar Gradle Wrapper
         run: |
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" 2>&1 | tail -3 || true
+          cd android
+          gradle wrapper --gradle-version 9.6.1 2>&1 | tail -5 || true
+          chmod +x gradlew
 
       - name: 🏗️ Build APK Release
         run: flutter build apk --release --android-skip-build-dependency-validation

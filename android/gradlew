@@ -1,19 +1,34 @@
 #!/bin/sh
-# Gradle Wrapper - TempMail App
-DIRNAME=$(dirname "$0")
-APP_HOME=$(cd "$DIRNAME" && pwd)
 
-# Se tiver Gradle no PATH, usa ele
+# Gradle wrapper for TempMail Pro
+# Uses the system Gradle installation
+
+# Find Gradle
+GRADLE=""
 if command -v gradle > /dev/null 2>&1; then
-    exec gradle "$@"
+    GRADLE="gradle"
+elif [ -f "/usr/bin/gradle" ]; then
+    GRADLE="/usr/bin/gradle"
+elif [ -f "/usr/local/bin/gradle" ]; then
+    GRADLE="/usr/local/bin/gradle"
+elif [ -f "$HOME/gradle/bin/gradle" ]; then
+    GRADLE="$HOME/gradle/bin/gradle"
 fi
 
-# Fallback: tenta java diretamente com o wrapper jar se existir
-if [ -f "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" ]; then
-    java -cp "$APP_HOME/gradle/wrapper/gradle-wrapper.jar" org.gradle.wrapper.GradleWrapperMain "$@"
-    exit $?
+if [ -n "$GRADLE" ]; then
+    exec $GRADLE "$@"
 fi
 
-echo "Gradle não encontrado. Use GitHub Actions para compilar automaticamente."
-echo "Ou instale Gradle: https://gradle.org/install/"
+# Fallback: try to use Java with a wrapper jar
+WRAPPER_JAR="$(dirname "$0")/gradle/wrapper/gradle-wrapper.jar"
+if [ -f "$WRAPPER_JAR" ]; then
+    if [ -n "$JAVA_HOME" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+    else
+        JAVA="java"
+    fi
+    exec $JAVA -jar "$WRAPPER_JAR" "$@"
+fi
+
+echo "ERROR: Gradle not found. Install Gradle or use GitHub Actions."
 exit 1
