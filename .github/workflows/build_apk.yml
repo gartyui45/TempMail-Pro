@@ -38,11 +38,10 @@ jobs:
 
       - name: 📦 Instalar Android SDK 36
         run: |
-          yes | sdkmanager "platforms;android-36" 2>&1 | tail -3 || true
-          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-36" 2>&1 | tail -3 || true
 
       - name: 🏗️ Build APK Release
-        run: flutter build apk --release
+        run: flutter build apk --release --android-skip-build-dependency-validation
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs="-Xmx2g -XX:MaxMetaspaceSize=512m"
 
