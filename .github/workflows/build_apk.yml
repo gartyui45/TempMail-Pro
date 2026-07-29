@@ -42,8 +42,11 @@ jobs:
       - name: Configurar Gradle Wrapper
         run: |
           cd android
-          gradle wrapper --gradle-version 9.6.1 2>&1 | tail -5 || true
+          gradle wrapper --gradle-version 9.5 2>&1 | tail -10
           chmod +x gradlew
+          cat gradle/wrapper/gradle-wrapper.properties
+          echo ""
+          echo "Wrapper configurado!"
 
       - name: 🏗️ Build APK Release
         run: flutter build apk --release --android-skip-build-dependency-validation
