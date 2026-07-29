@@ -165,9 +165,9 @@ class EmailDetailScreen extends StatelessWidget {
               Container(
                 height: 1,
                 margin: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.transparent, Color(0xFF00D4FF).withOpacity(0.5), Colors.transparent],
+                    colors: [Colors.transparent, const Color(0xFF00D4FF).withOpacity(0.5), Colors.transparent],
                   ),
                 ),
               ),
